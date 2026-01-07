@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-200: #c7d2fe;
+  --color-brand-300: #a5b4fc;
+  --color-brand-400: #818cf8;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --color-brand-800: #3730a3;
+  --color-brand-900: #312e81;
+  --color-brand-950: #1e1b4b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInFromTop2 {
+  from { transform: translateY(-0.5rem); }
+  to { transform: translateY(0); }
+}
+
+.animate-in {
+  animation-duration: 0.2s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fadeIn;
+}
+
+.slide-in-from-top-2 {
+  animation-name: slideInFromTop2;
+  /* If used together, we need to combine animations or handling multiple names.
+     Tailwind animate utilities usually mix.
+     Standard CSS 'animation-name' overwrites.
+     We'll define a combined class for where it's used or just support the specific combination if possible.
+     Actually, usually it's `animate-in` triggering internal logic.
+     Let's just define a specific class that does both if needed, OR just `fade-in` as it is most important.
+     Or define `animation: fadeIn 0.15s ease-out, slideInFromTop2 0.15s ease-out;` for the specific combination?
+     The class in Header.tsx is `animate-in fade-in slide-in-from-top-2`.
+     If I define `.animate-in.fade-in.slide-in-from-top-2` selector it works.
+  */
+}
+
+.animate-in.fade-in.slide-in-from-top-2 {
+    animation-name: fadeIn, slideInFromTop2;
+}

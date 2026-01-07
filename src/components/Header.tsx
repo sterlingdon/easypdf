@@ -1,18 +1,50 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
 import { Globe, Menu, X, Command, ChevronDown, Settings, Heart } from 'lucide-react';
-import { useLanguage } from '../contexts/LanguageContext';
-import { supportedLanguages } from '../i18n';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { supportedLanguages } from '@/i18n';
+import { usePathname } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
 
 export const Header: React.FC = () => {
   const { language, setLanguage, t, localizedPath } = useLanguage();
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   
   const megaMenuRef = useRef<HTMLDivElement>(null);
+  const megaMenuContentRef = useRef<HTMLDivElement>(null);
   const langMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close menus when route changes
+  useEffect(() => {
+    setMegaMenuOpen(false);
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
+  // Close menus when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // Check if click is outside both the trigger AND the dropdown content
+      const clickedOutsideMegaArgs = 
+        megaMenuRef.current && !megaMenuRef.current.contains(event.target as Node);
+      const clickedOutsideMegaContent = 
+        !megaMenuContentRef.current || !megaMenuContentRef.current.contains(event.target as Node);
+
+      if (clickedOutsideMegaArgs && clickedOutsideMegaContent) {
+        setMegaMenuOpen(false);
+      }
+
+      if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
+        setLangMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,20 +52,6 @@ export const Header: React.FC = () => {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Close menus when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (megaMenuRef.current && !megaMenuRef.current.contains(event.target as Node)) {
-        setMegaMenuOpen(false);
-      }
-      if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
-        setLangMenuOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleLanguageSelect = (code: string) => {
@@ -49,27 +67,27 @@ export const Header: React.FC = () => {
       {
         dotColor: 'bg-rose-200',
         items: [
-          { label: t('menu.merge_pdfs'), to: '#' },
-          { label: t('menu.split_pdf'), to: '#' },
-          { label: t('menu.remove_pages'), to: '#' },
-          { label: t('menu.organize_pages'), to: '#' },
-          { label: t('menu.split_outline'), to: '#' },
-          { label: t('menu.split_size'), to: '#' },
-          { label: t('menu.remove_blank'), to: '#' },
-          { label: t('menu.n_up'), to: '#' },
-          { label: t('menu.crop'), to: '#' },
-          { label: t('menu.adjust_size'), to: '#' },
+          { label: t('menu.merge_pdfs'), to: localizedPath('/merge-pdf') },
+          { label: t('menu.split_pdf'), to: localizedPath('/split-pdf') },
+          { label: t('menu.remove_pages'), to: localizedPath('/remove-pages') },
+          { label: t('menu.organize_pages'), to: localizedPath('/organize-pages') },
+          { label: t('menu.split_outline'), to: localizedPath('/split-outline') },
+          { label: t('menu.split_size'), to: localizedPath('/split-size') },
+          { label: t('menu.remove_blank'), to: localizedPath('/remove-blank') },
+          { label: t('menu.n_up'), to: localizedPath('/n-up') },
+          { label: t('menu.crop'), to: localizedPath('/crop') },
+          { label: t('menu.adjust_size'), to: localizedPath('/adjust-size') },
         ]
       },
       {
         dotColor: 'bg-purple-200',
         items: [
-          { label: t('menu.pdf_to_image'), to: '#' },
-          { label: t('menu.pdf_to_jpg'), to: '#' },
-          { label: t('menu.pdf_to_png'), to: '#' },
-          { label: t('menu.pdf_to_webp'), to: '#' },
-          { label: t('menu.pdf_to_avif'), to: '#' },
-          { label: t('menu.pdf_to_svg'), to: '#' },
+          { label: t('menu.pdf_to_image'), to: localizedPath('/pdf-to-image') },
+          { label: t('menu.pdf_to_jpg'), to: localizedPath('/pdf-to-jpg') },
+          { label: t('menu.pdf_to_png'), to: localizedPath('/pdf-to-png') },
+          { label: t('menu.pdf_to_webp'), to: localizedPath('/pdf-to-webp') },
+          { label: t('menu.pdf_to_avif'), to: localizedPath('/pdf-to-avif') },
+          { label: t('menu.pdf_to_svg'), to: localizedPath('/pdf-to-svg') },
         ]
       }
     ],
@@ -78,23 +96,23 @@ export const Header: React.FC = () => {
       {
         dotColor: 'bg-blue-200',
         items: [
-          { label: t('menu.extract_pages'), to: '#' },
-          { label: t('menu.extract_images'), to: '#' },
-          { label: t('menu.extract_paths'), to: '#' },
-          { label: t('menu.extract_text'), to: '#' },
-          { label: t('menu.remove_text'), to: '#' },
-          { label: t('menu.remove_image'), to: '#' },
-          { label: t('menu.remove_vector'), to: '#' },
+          { label: t('menu.extract_pages'), to: localizedPath('/extract-pages') },
+          { label: t('menu.extract_images'), to: localizedPath('/extract-images') },
+          { label: t('menu.extract_paths'), to: localizedPath('/extract-paths') },
+          { label: t('menu.extract_text'), to: localizedPath('/extract-text') },
+          { label: t('menu.remove_text'), to: localizedPath('/remove-text') },
+          { label: t('menu.remove_image'), to: localizedPath('/remove-image') },
+          { label: t('menu.remove_vector'), to: localizedPath('/remove-vector') },
         ]
       },
       {
         dotColor: 'bg-indigo-200',
         items: [
-          { label: t('menu.compress_pdf'), to: '#' },
-          { label: t('menu.pdf_to_html'), to: '#' },
-          { label: t('menu.pdf_to_txt'), to: '#' },
-          { label: t('menu.long_image'), to: '#' },
-          { label: t('menu.images_to_pdf'), to: '#' },
+          { label: t('menu.compress_pdf'), to: localizedPath('/compress-pdf') },
+          { label: t('menu.pdf_to_html'), to: localizedPath('/pdf-to-html') },
+          { label: t('menu.pdf_to_txt'), to: localizedPath('/pdf-to-txt') },
+          { label: t('menu.long_image'), to: localizedPath('/long-image') },
+          { label: t('menu.images_to_pdf'), to: localizedPath('/images-to-pdf') },
         ]
       }
     ],
@@ -103,17 +121,17 @@ export const Header: React.FC = () => {
       {
         dotColor: 'bg-emerald-200',
         items: [
-          { label: t('menu.unlock'), to: '#' },
-          { label: t('menu.protect'), to: '#' },
-          { label: t('menu.grayscale'), to: '#' },
+          { label: t('menu.unlock'), to: localizedPath('/unlock') },
+          { label: t('menu.protect'), to: localizedPath('/protect') },
+          { label: t('menu.grayscale'), to: localizedPath('/grayscale') },
         ]
       },
       {
         dotColor: 'bg-orange-200',
         items: [
-          { label: t('menu.rotate'), to: '#' },
-          { label: t('menu.view_metadata'), to: '#' },
-          { label: t('menu.edit_metadata'), to: '#' },
+          { label: t('menu.rotate'), to: localizedPath('/rotate') },
+          { label: t('menu.view_metadata'), to: localizedPath('/view-metadata') },
+          { label: t('menu.edit_metadata'), to: localizedPath('/edit-metadata') },
         ]
       }
     ]
@@ -131,7 +149,7 @@ export const Header: React.FC = () => {
           {/* Left Side: Logo & Main Nav */}
           <div className="flex items-center">
             {/* Logo */}
-            <Link to={localizedPath('/')} className="flex items-center space-x-2 mr-10">
+            <Link href={localizedPath('/')} className="flex items-center space-x-2 mr-10">
               <span className="text-2xl font-bold text-slate-800 tracking-tight flex items-center">
                 <span className="text-brand-500">PDF</span>.Master
               </span>
@@ -139,19 +157,19 @@ export const Header: React.FC = () => {
 
             {/* Desktop Nav Items */}
             <nav className="hidden lg:flex items-center space-x-1">
-              <Link to={localizedPath('/')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors">
+              <Link href={localizedPath('/merge-pdf')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors">
                 {t('nav.merge')}
               </Link>
-              <Link to={localizedPath('/')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors">
+              <Link href={localizedPath('/split-pdf')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors">
                 {t('nav.split')}
               </Link>
-              <Link to={localizedPath('/')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors">
+              <Link href={localizedPath('/pdf-to-image')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors">
                 {t('nav.pdf_to_image')}
               </Link>
-              <Link to={localizedPath('/')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors">
+              <Link href={localizedPath('/images-to-pdf')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors">
                 {t('nav.images_to_pdf')}
               </Link>
-              <Link to={localizedPath('/')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors">
+              <Link href={localizedPath('/compress-pdf')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors">
                 {t('nav.compress')}
               </Link>
               
@@ -222,7 +240,10 @@ export const Header: React.FC = () => {
 
         {/* Mega Menu Dropdown */}
         {megaMenuOpen && (
-          <div className="absolute top-full left-0 mt-2 w-full bg-white rounded-3xl shadow-2xl border border-slate-100 p-8 animate-in fade-in slide-in-from-top-2 z-50 overflow-hidden">
+          <div 
+             ref={megaMenuContentRef}
+             className="absolute top-full left-0 mt-2 w-full bg-white rounded-3xl shadow-2xl border border-slate-100 p-8 animate-in fade-in slide-in-from-top-2 z-50 overflow-hidden"
+          >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               {menuColumns.map((col, colIndex) => (
                 <div key={colIndex} className="space-y-8">
@@ -233,9 +254,8 @@ export const Header: React.FC = () => {
                           <li key={itemIndex} className="flex items-start space-x-3 group/item">
                             <div className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 ${group.dotColor}`}></div>
                             <Link 
-                              to={item.to} 
+                              href={item.to} 
                               className="text-[15px] font-medium text-slate-700 hover:text-brand-600 transition-colors"
-                              onClick={() => setMegaMenuOpen(false)}
                             >
                               {item.label}
                             </Link>
@@ -276,9 +296,8 @@ export const Header: React.FC = () => {
                  {group.items.map((item, j) => (
                    <Link 
                     key={j}
-                    to={item.to}
+                    href={item.to}
                     className="flex items-center space-x-3 py-3 border-b border-slate-50 text-slate-700 font-medium"
-                    onClick={() => setMobileMenuOpen(false)}
                    >
                      <div className={`w-2 h-2 rounded-full ${group.dotColor}`}></div>
                      <span>{item.label}</span>

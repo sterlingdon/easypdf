@@ -1,7 +1,9 @@
+'use client';
+
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useLanguage } from '../contexts/LanguageContext';
-import { Tool } from '../types';
+import Link from 'next/link';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { Tool } from '@/types';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
 interface ToolCardProps {
@@ -13,7 +15,7 @@ export const ToolCard: React.FC<ToolCardProps> = ({ tool }) => {
 
   return (
     <Link 
-      to={localizedPath(tool.path)}
+      href={localizedPath(tool.path)}
       className="group bg-white rounded-2xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)] border border-transparent hover:border-slate-100 transition-all duration-300 flex flex-col h-full relative overflow-hidden"
     >
       {tool.isNew && (

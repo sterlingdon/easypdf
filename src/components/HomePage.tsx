@@ -1,17 +1,19 @@
+'use client';
+
 import React from 'react';
-import { useLanguage } from '../contexts/LanguageContext';
-import { ToolCard } from '../components/ToolCard';
-import { Tool } from '../types';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { ToolCard } from '@/components/ToolCard';
+import { Tool } from '@/types';
 import { 
   MessageSquare, 
   BarChart2, 
   Merge, 
   Scissors, 
   Minimize2, 
-  Image 
+  Image as ImageIcon 
 } from 'lucide-react';
 
-export const Home: React.FC = () => {
+export default function Home() {
   const { t } = useLanguage();
 
   const tools: Tool[] = [
@@ -44,21 +46,21 @@ export const Home: React.FC = () => {
       icon: Merge,
       titleKey: 'tool.merge.title',
       descKey: 'tool.merge.desc',
-      path: '/',
+      path: '/merge-pdf',
     },
     {
       id: 'split-pdf',
       icon: Scissors,
       titleKey: 'tool.split.title',
       descKey: 'tool.split.desc',
-      path: '/',
+      path: '/split-pdf',
     },
     {
       id: 'img-to-pdf',
-      icon: Image,
+      icon: ImageIcon,
       titleKey: 'tool.img2pdf.title',
       descKey: 'tool.img2pdf.desc',
-      path: '/',
+      path: '/images-to-pdf',
     },
   ];
 
@@ -118,4 +120,4 @@ export const Home: React.FC = () => {
       </section>
     </div>
   );
-};
+}

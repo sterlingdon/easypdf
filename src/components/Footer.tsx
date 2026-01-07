@@ -1,5 +1,7 @@
+'use client';
+
 import React from 'react';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Command } from 'lucide-react';
 
 export const Footer: React.FC = () => {
