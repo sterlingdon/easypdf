@@ -151,25 +151,60 @@ export const Header: React.FC = () => {
             {/* Logo */}
             <Link href={localizedPath('/')} className="flex items-center space-x-2 mr-10">
               <span className="text-2xl font-bold text-slate-800 tracking-tight flex items-center">
-                <span className="text-brand-500">PDF</span>.Master
+                <span className="text-brand-500">Easy</span> PDF
               </span>
             </Link>
 
             {/* Desktop Nav Items */}
             <nav className="hidden lg:flex items-center space-x-1">
-              <Link href={localizedPath('/merge-pdf')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors">
+              <Link 
+                href={localizedPath('/merge-pdf')} 
+                className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                  pathname === localizedPath('/merge-pdf')
+                    ? 'text-brand-600 bg-brand-50'
+                    : 'text-slate-600 hover:text-brand-600 hover:bg-brand-50'
+                }`}
+              >
                 {t('nav.merge')}
               </Link>
-              <Link href={localizedPath('/split-pdf')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors">
+              <Link 
+                href={localizedPath('/split-pdf')} 
+                className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                  pathname === localizedPath('/split-pdf')
+                    ? 'text-brand-600 bg-brand-50'
+                    : 'text-slate-600 hover:text-brand-600 hover:bg-brand-50'
+                }`}
+              >
                 {t('nav.split')}
               </Link>
-              <Link href={localizedPath('/pdf-to-image')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors">
+              <Link 
+                href={localizedPath('/pdf-to-image')} 
+                className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                  pathname === localizedPath('/pdf-to-image')
+                    ? 'text-brand-600 bg-brand-50'
+                    : 'text-slate-600 hover:text-brand-600 hover:bg-brand-50'
+                }`}
+              >
                 {t('nav.pdf_to_image')}
               </Link>
-              <Link href={localizedPath('/images-to-pdf')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors">
+              <Link 
+                href={localizedPath('/images-to-pdf')} 
+                className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                  pathname === localizedPath('/images-to-pdf')
+                    ? 'text-brand-600 bg-brand-50'
+                    : 'text-slate-600 hover:text-brand-600 hover:bg-brand-50'
+                }`}
+              >
                 {t('nav.images_to_pdf')}
               </Link>
-              <Link href={localizedPath('/compress-pdf')} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-brand-600 hover:bg-brand-50 rounded-full transition-colors">
+              <Link 
+                href={localizedPath('/compress-pdf')} 
+                className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                  pathname === localizedPath('/compress-pdf')
+                    ? 'text-brand-600 bg-brand-50'
+                    : 'text-slate-600 hover:text-brand-600 hover:bg-brand-50'
+                }`}
+              >
                 {t('nav.compress')}
               </Link>
               
@@ -255,7 +290,11 @@ export const Header: React.FC = () => {
                             <div className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 ${group.dotColor}`}></div>
                             <Link 
                               href={item.to} 
-                              className="text-[15px] font-medium text-slate-700 hover:text-brand-600 transition-colors"
+                              className={`text-[15px] font-medium transition-colors ${
+                                item.to === pathname 
+                                  ? 'text-brand-600 font-semibold' 
+                                  : 'text-slate-700 hover:text-brand-600'
+                              }`}
                             >
                               {item.label}
                             </Link>
@@ -297,7 +336,11 @@ export const Header: React.FC = () => {
                    <Link 
                     key={j}
                     href={item.to}
-                    className="flex items-center space-x-3 py-3 border-b border-slate-50 text-slate-700 font-medium"
+                    className={`flex items-center space-x-3 py-3 border-b border-slate-50 font-medium ${
+                      item.to === pathname 
+                        ? 'text-brand-600' 
+                        : 'text-slate-700'
+                    }`}
                    >
                      <div className={`w-2 h-2 rounded-full ${group.dotColor}`}></div>
                      <span>{item.label}</span>

@@ -6,20 +6,57 @@ import { Plus, CheckCircle2, Download, ArrowLeft, ArrowRight, X, Image as ImageI
 import Link from 'next/link';
 import { PdfToImage } from '@/services/PdfToImage';
 
+import { ToolPageLayout } from './ToolPageLayout';
+import { FileItem, ProcessingStatus } from '@/types';
+
 export default function PdfToImagePage() {
   const { t, localizedPath } = useLanguage();
-  const [file, setFile] = useState<File | null>(null);
-  const [status, setStatus] = useState<'IDLE' | 'PROCESSING' | 'COMPLETED'>('IDLE');
+  const [file, setFile] = useState<FileItem | null>(null);
+  const [status, setStatus] = useState<ProcessingStatus>('IDLE');
   const [resultZip, setResultZip] = useState<Blob | null>(null);
   const [format, setFormat] = useState<'jpg' | 'png' | 'webp'>('jpg');
   
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
+      const f = e.target.files[0];
+      const tempId = Math.random().toString(36).substr(2, 9);
+      setFile({
+          id: tempId,
+          file: f,
+          pages: 0,
+          width: 0,
+          height: 0
+      });
+
+      try {
+        const pdfjsLib = await import('pdfjs-dist');
+        if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.mjs', import.meta.url).href;
+        }
+
+        const arrayBuffer = await f.arrayBuffer();
+        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+        const pdf = await loadingTask.promise;
+        
+        let thumbnailUrl = undefined;
+        try {
+            const page = await pdf.getPage(1);
+            const viewport = page.getViewport({ scale: 0.5 });
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            if (context) {
+                await page.render({ canvasContext: context, viewport, canvas: canvas as any }).promise;
+                thumbnailUrl = canvas.toDataURL();
+            }
+        } catch (e) { console.error(e); }
+
+        setFile(prev => (prev && prev.id === tempId) ? { ...prev, pages: pdf.numPages, thumbnailUrl } : prev);
+      } catch (err) {
+        console.error(err);
+      }
     }
-    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleConvert = async () => {
@@ -27,8 +64,12 @@ export default function PdfToImagePage() {
 
     setStatus('PROCESSING');
     try {
-        const zipBlob = await PdfToImage.convert(file, format);
+        const zipBlob = await PdfToImage.convert(file.file, format);
         setResultZip(zipBlob);
+        
+        // Simulate progress for UX consistency
+        await new Promise(r => setTimeout(r, 1000));
+        
         setStatus('COMPLETED');
     } catch (error) {
         console.error(error);
@@ -48,15 +89,38 @@ export default function PdfToImagePage() {
     document.body.removeChild(link);
   };
 
-  const gridStyle = {
-    backgroundImage: `linear-gradient(#e5e7eb 1px, transparent 1px), linear-gradient(90deg, #e5e7eb 1px, transparent 1px)`,
-    backgroundSize: '40px 40px',
-    backgroundPosition: 'center center'
-  };
+  const sidebarContent = (
+      <>
+        <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center">
+            <ImageIcon size={20} className="mr-2" />
+            Settings
+        </h2>
 
-  if (status === 'COMPLETED') {
-    return (
-      <div className="min-h-screen bg-[#f7f7f7] pb-20" style={gridStyle}>
+        <div className="space-y-4">
+            <div className="bg-slate-50 p-4 rounded-xl">
+                <label className="text-sm font-bold text-slate-700 block mb-3">Output Format</label>
+                <div className="grid grid-cols-3 gap-2">
+                    {['jpg', 'png', 'webp'].map((f) => (
+                        <button
+                            key={f}
+                            onClick={() => setFormat(f as any)}
+                            className={`py-2 rounded-lg text-sm font-medium transition-all ${format === f ? 'bg-brand-500 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'}`}
+                        >
+                            {f.toUpperCase()}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        </div>
+      </>
+  );
+
+  const successContent = (
+      <div className="min-h-screen bg-[#f7f7f7] pb-20" style={{
+        backgroundImage: `linear-gradient(#e5e7eb 1px, transparent 1px), linear-gradient(90deg, #e5e7eb 1px, transparent 1px)`,
+        backgroundSize: '40px 40px',
+        backgroundPosition: 'center center'
+      }}>
          <div className="bg-transparent px-6 py-4">
            <Link href={localizedPath('/')} className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 transition-colors">
               <ArrowLeft size={20} />
@@ -89,117 +153,20 @@ export default function PdfToImagePage() {
             </div>
          </div>
       </div>
-    );
-  }
-
-  if (status === 'PROCESSING') {
-    return (
-        <div className="fixed inset-0 z-50 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center">
-            <div className="w-16 h-16 border-4 border-brand-200 border-t-brand-600 rounded-full animate-spin mb-4"></div>
-            <p className="text-xl font-semibold text-slate-700">Converting to Images...</p>
-        </div>
-    );
-  }
-
-  // Dashboard
-  if (file) {
-      return (
-        <div className="min-h-screen bg-slate-100 flex flex-col">
-            <div className="bg-white px-6 py-3 flex items-center justify-between border-b border-slate-200 sticky top-0 z-30">
-                <div className="flex items-center">
-                    <Link href={localizedPath('/')} className="p-2 hover:bg-slate-100 rounded-full mr-4 text-slate-500">
-                        <ArrowLeft size={20} />
-                    </Link>
-                    <h1 className="text-lg font-bold text-slate-800">{t('tool.pdf_to_image.title')}</h1>
-                </div>
-            </div>
-
-            <div className="flex-grow flex flex-col md:flex-row h-[calc(100vh-64px)] overflow-hidden">
-                {/* Main Canvas */}
-                <div className="flex-grow p-8 bg-slate-200/50 flex flex-col items-center justify-center" style={gridStyle}>
-                    <div className="bg-white rounded-xl shadow-md border border-slate-200 p-8 flex flex-col items-center animate-in fade-in zoom-in duration-300">
-                        <div className="w-32 h-40 bg-slate-50 border-2 border-slate-100 rounded-lg flex items-center justify-center mb-6 relative">
-                            <CheckCircle2 size={64} className="text-brand-200" />
-                            <div className="absolute -top-3 -right-3">
-                                <button onClick={() => setFile(null)} className="bg-white text-slate-400 hover:text-red-500 rounded-full p-1 shadow border border-slate-200">
-                                    <X size={16} />
-                                </button>
-                            </div>
-                        </div>
-                        <h3 className="font-bold text-slate-800 text-lg mb-1">{file.name}</h3>
-                        <p className="text-sm text-slate-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
-                    </div>
-                </div>
-
-                {/* Sidebar */}
-                <div className="w-full md:w-[320px] bg-white border-l border-slate-200 flex flex-col shadow-xl z-20">
-                    <div className="p-6 flex-grow">
-                        <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center">
-                            <ImageIcon size={20} className="mr-2" />
-                            Settings
-                        </h2>
-
-                        <div className="space-y-4">
-                            <div className="bg-slate-50 p-4 rounded-xl">
-                                <label className="text-sm font-bold text-slate-700 block mb-3">Output Format</label>
-                                <div className="grid grid-cols-3 gap-2">
-                                    {['jpg', 'png', 'webp'].map((f) => (
-                                        <button
-                                            key={f}
-                                            onClick={() => setFormat(f as any)}
-                                            className={`py-2 rounded-lg text-sm font-medium transition-all ${format === f ? 'bg-brand-500 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'}`}
-                                        >
-                                            {f.toUpperCase()}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="p-6 border-t border-slate-100 bg-slate-50">
-                        <button 
-                            onClick={handleConvert}
-                            className="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold text-lg py-4 rounded-2xl shadow-lg shadow-brand-200 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center"
-                        >
-                            Convert to Images <ArrowRight size={20} className="ml-2" />
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-      );
-  }
+  );
 
   return (
-    <div className="min-h-screen bg-[#f7f7f7] pb-20" style={gridStyle}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-            <h1 className="text-5xl font-extrabold text-slate-900 mb-4">{t('tool.pdf_to_image.title')}</h1>
-            <p className="text-xl text-slate-500 mb-12">{t('tool.pdf_to_image.desc')}</p>
-
-            <div 
-                className="bg-white rounded-[2.5rem] p-16 shadow-2xl shadow-slate-200/50 border border-white hover:border-brand-200 transition-all cursor-pointer group relative overflow-hidden"
-                onClick={() => fileInputRef.current?.click()}
-            >
-                <div className="absolute inset-0 bg-brand-50 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                
-                <button className="relative z-10 bg-brand-500 text-white text-lg font-bold px-10 py-4 rounded-full shadow-lg shadow-brand-200 group-hover:scale-105 transition-transform flex items-center justify-center mx-auto mb-8">
-                    <Plus size={24} className="mr-2" /> Select PDF File
-                </button>
-                
-                <p className="relative z-10 text-slate-400 font-medium">
-                    or drop PDF here
-                </p>
-
-                <input 
-                    type="file" 
-                    accept=".pdf" 
-                    ref={fileInputRef} 
-                    className="hidden" 
-                    onChange={handleFileSelect}
-                />
-            </div>
-        </div>
-    </div>
+    <ToolPageLayout
+      title={t('tool.pdf_to_image.title')}
+      description={t('tool.pdf_to_image.desc')}
+      files={file ? [file] : []}
+      status={status}
+      maxFiles={1}
+      onFilesSelected={handleFileSelect}
+      onRemoveFile={() => setFile(null)}
+      onStart={handleConvert}
+      sidebarContent={sidebarContent}
+      successContent={successContent}
+    />
   );
 }

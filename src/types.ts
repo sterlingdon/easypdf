@@ -30,3 +30,15 @@ export interface LanguageContextType {
   t: (key: string) => string;
   localizedPath: (path: string) => string;
 }
+
+export interface FileItem {
+  id: string;
+  file: File;
+  pages: number;
+  width: number;
+  height: number;
+  thumbnailUrl?: string; // Preview image
+}
+
+export type ProcessingStatus = 'IDLE' | 'PROCESSING' | 'COMPLETED';
+
