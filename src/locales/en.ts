@@ -116,4 +116,47 @@ export const en = {
   'compress.download_zip': 'Download Zip',
   'compress.continue': 'Continue processing :',
   'compress.download': 'Download',
+  
+  // New Tools
+  'tool.unlock.title': 'Unlock PDF',
+  'tool.unlock.desc': 'Remove password security from PDF files.',
+  'unlock.settings': 'Unlock Settings',
+  'unlock.password_label': 'Enter Password',
+  'unlock.desc_hint': 'Enter the password to unlock this document.',
+  'unlock.success': 'PDF Unlocked Successfully!',
+
+  'tool.protect.title': 'Protect PDF',
+  'tool.protect.desc': 'Encrypt your PDF with a password.',
+  'protect.settings': 'Security Settings',
+  'protect.password_label': 'Set a Password',
+  'protect.confirm_password': 'Confirm Password',
+  'protect.desc_hint': 'The password will be required to open the PDF.',
+  'protect.success': 'PDF Protected Successfully!',
+
+  'tool.rotate.title': 'Rotate PDF',
+  'tool.rotate.desc': 'Rotate PDF pages permanently.',
+  'rotate.settings': 'Rotation Settings',
+  'rotate.left': 'Left (-90°)',
+  'rotate.right': 'Right (+90°)',
+  'rotate.success': 'PDF Rotated Successfully!',
+
+  'tool.grayscale.title': 'PDF to Grayscale',
+  'tool.grayscale.desc': 'Convert PDF colors to black and white.',
+  'grayscale.settings': 'Color Settings',
+  'grayscale.desc_hint': 'Convert the document to grayscale.',
+  'grayscale.success': 'Converted to Grayscale Successfully!',
+
+  'tool.view_metadata.title': 'View PDF Metadata',
+  'tool.view_metadata.desc': 'View detailed metadata of your PDF file.',
+  'metadata.view_info': 'File Information',
+
+  'tool.edit_metadata.title': 'Edit Metadata',
+  'tool.edit_metadata.desc': 'Modify Title, Author, Keywords and more.',
+  'metadata.edit_fields': 'Edit Metadata Fields',
+  'metadata.success': 'Metadata Updated Successfully!',
+
+  'common.download': 'Download File',
+  'common.download_all': 'Download All',
+  'common.edit_another': 'Edit Another PDF',
+  'common.process_more': 'Process More Files',
 };

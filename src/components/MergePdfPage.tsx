@@ -6,7 +6,7 @@ import { Plus, FileText, X, ArrowLeft, ArrowRight, CheckCircle2, Download, Share
 import Link from 'next/link';
 import { PdfMerger } from '@/services/PdfMerger';
 
-type ProcessingStatus = 'IDLE' | 'PROCESSING' | 'COMPLETED';
+
 
 import { ToolPageLayout } from './ToolPageLayout';
 import { FileItem, ProcessingStatus } from '@/types';

@@ -4,6 +4,12 @@ import MergePdfPage from '@/components/MergePdfPage';
 import SplitPdfPage from '@/components/SplitPdfPage';
 import PdfToImagePage from '@/components/PdfToImagePage';
 import ImagesToPdfPage from '@/components/ImagesToPdfPage';
+import UnlockPdfPage from '@/components/UnlockPdfPage';
+import ProtectPdfPage from '@/components/ProtectPdfPage';
+import RotatePdfPage from '@/components/RotatePdfPage';
+import GrayscalePdfPage from '@/components/GrayscalePdfPage';
+import ViewMetadataPage from '@/components/ViewMetadataPage';
+import EditMetadataPage from '@/components/EditMetadataPage';
 import { Metadata } from 'next';
 import { getSeoMetadata } from '@/lib/seo-config';
 
@@ -82,6 +88,24 @@ export default async function ToolPage({ params }: { params: Promise<{ tool: str
   }
   if (tool === 'images-to-pdf') {
     return <ImagesToPdfPage />;
+  }
+  if (tool === 'unlock') {
+    return <UnlockPdfPage />;
+  }
+  if (tool === 'protect') {
+    return <ProtectPdfPage />;
+  }
+  if (tool === 'rotate') {
+    return <RotatePdfPage />;
+  }
+  if (tool === 'grayscale') {
+    return <GrayscalePdfPage />;
+  }
+  if (tool === 'view-metadata') {
+    return <ViewMetadataPage />;
+  }
+  if (tool === 'edit-metadata') {
+    return <EditMetadataPage />;
   }
 
   return <PlaceholderPage />;
