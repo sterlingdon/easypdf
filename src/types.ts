@@ -27,7 +27,7 @@ export enum LoadingState {
 export interface LanguageContextType {
   language: string;
   setLanguage: (lang: string) => void;
-  t: (key: string) => string;
+  t: (key: string, options?: string | Record<string, any>) => string;
   localizedPath: (path: string) => string;
 }
 
@@ -40,5 +40,5 @@ export interface FileItem {
   thumbnailUrl?: string; // Preview image
 }
 
-export type ProcessingStatus = 'IDLE' | 'PROCESSING' | 'COMPLETED';
+export type ProcessingStatus = 'IDLE' | 'PROCESSING' | 'COMPLETED' | 'ERROR';
 

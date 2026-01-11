@@ -26,6 +26,7 @@ interface ToolPageLayoutProps {
   // Customization
   accept?: string; // e.g. ".pdf"
   maxFiles?: number;
+  actionLabel?: string;
 }
 
 export const ToolPageLayout: React.FC<ToolPageLayoutProps> = ({
@@ -41,7 +42,8 @@ export const ToolPageLayout: React.FC<ToolPageLayoutProps> = ({
   sidebarContent,
   successContent,
   accept = ".pdf",
-  maxFiles
+  maxFiles,
+  actionLabel
 }) => {
   const { t, localizedPath } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -233,7 +235,7 @@ export const ToolPageLayout: React.FC<ToolPageLayoutProps> = ({
                         onClick={onStart}
                         className="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold text-xl py-4 rounded-2xl shadow-xl shadow-brand-200 hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center group"
                      >
-                        {t('compress.start') || 'Start Processing'} 
+                        {actionLabel || t('compress.start') || 'Start Processing'} 
                         <div className="bg-white/20 p-1 rounded-full ml-3 group-hover:translate-x-1 transition-transform">
                              <ArrowRight size={20} />
                         </div>

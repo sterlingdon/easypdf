@@ -10,6 +10,32 @@ import RotatePdfPage from '@/components/RotatePdfPage';
 import GrayscalePdfPage from '@/components/GrayscalePdfPage';
 import ViewMetadataPage from '@/components/ViewMetadataPage';
 import EditMetadataPage from '@/components/EditMetadataPage';
+
+// New components - Page Management
+import RemovePagesPage from '@/components/RemovePagesPage';
+import ExtractPagesPage from '@/components/ExtractPagesPage';
+import OrganizePagesPage from '@/components/OrganizePagesPage';
+import SplitOutlinePage from '@/components/SplitOutlinePage';
+import SplitSizePage from '@/components/SplitSizePage';
+import RemoveBlankPage from '@/components/RemoveBlankPage';
+
+// New components - Image Format Converters
+import PdfToJpgPage from '@/components/PdfToJpgPage';
+import PdfToPngPage from '@/components/PdfToPngPage';
+import PdfToWebpPage from '@/components/PdfToWebpPage';
+import PdfToAvifPage from '@/components/PdfToAvifPage';
+import PdfToLongImagePage from '@/components/PdfToLongImagePage';
+import ExtractImagesPage from '@/components/ExtractImagesPage';
+
+// New components - Text Extraction
+import ExtractTextPage from '@/components/ExtractTextPage';
+import PdfToTxtPage from '@/components/PdfToTxtPage';
+
+// New components - Transformers
+import AdjustSizePage from '@/components/AdjustSizePage';
+import CropPage from '@/components/CropPage';
+import NUpPage from '@/components/NUpPage';
+
 import { Metadata } from 'next';
 import { getSeoMetadata } from '@/lib/seo-config';
 
@@ -77,6 +103,7 @@ export async function generateStaticParams() {
 export default async function ToolPage({ params }: { params: Promise<{ tool: string }> }) {
   const { tool } = await params;
 
+  // Original tools
   if (tool === 'merge-pdf') {
     return <MergePdfPage />;
   }
@@ -106,6 +133,63 @@ export default async function ToolPage({ params }: { params: Promise<{ tool: str
   }
   if (tool === 'edit-metadata') {
     return <EditMetadataPage />;
+  }
+
+  // Page Management
+  if (tool === 'remove-pages') {
+    return <RemovePagesPage />;
+  }
+  if (tool === 'extract-pages') {
+    return <ExtractPagesPage />;
+  }
+  if (tool === 'organize-pages') {
+    return <OrganizePagesPage />;
+  }
+  if (tool === 'split-outline') {
+    return <SplitOutlinePage />;
+  }
+  if (tool === 'split-size') {
+    return <SplitSizePage />;
+  }
+  if (tool === 'remove-blank') {
+    return <RemoveBlankPage />;
+  }
+  if (tool === 'n-up') {
+    return <NUpPage />;
+  }
+  if (tool === 'crop') {
+    return <CropPage />;
+  }
+  if (tool === 'adjust-size') {
+    return <AdjustSizePage />;
+  }
+
+  // Image Format Converters
+  if (tool === 'pdf-to-jpg') {
+    return <PdfToJpgPage />;
+  }
+  if (tool === 'pdf-to-png') {
+    return <PdfToPngPage />;
+  }
+  if (tool === 'pdf-to-webp') {
+    return <PdfToWebpPage />;
+  }
+  if (tool === 'pdf-to-avif') {
+    return <PdfToAvifPage />;
+  }
+  if (tool === 'long-image') {
+    return <PdfToLongImagePage />;
+  }
+  if (tool === 'extract-images') {
+    return <ExtractImagesPage />;
+  }
+
+  // Text Extraction
+  if (tool === 'extract-text') {
+    return <ExtractTextPage />;
+  }
+  if (tool === 'pdf-to-txt') {
+    return <PdfToTxtPage />;
   }
 
   return <PlaceholderPage />;

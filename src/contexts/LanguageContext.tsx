@@ -44,11 +44,24 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     router.push(newPath);
   };
 
-  const t = (key: string): string => {
+  const t = (key: string, options?: string | Record<string, any>): string => {
     // @ts-ignore - Dynamic key access with string index
     const langData = translations[language] || translations['en'];
     // @ts-ignore
-    return langData[key] || key;
+    let text = langData[key];
+
+    if (!text) {
+        if (typeof options === 'string') return options;
+        return key;
+    }
+
+    if (typeof options === 'object' && options !== null) {
+         Object.entries(options).forEach(([k, v]) => {
+            text = text.replace(new RegExp(`{{\\s*${k}\\s*}}`, 'g'), String(v));
+         });
+    }
+
+    return text;
   };
 
   const localizedPath = (path: string): string => {
